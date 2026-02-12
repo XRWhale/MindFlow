@@ -68,19 +68,6 @@
             text-decoration: underline;
             word-break: break-all;
         }
-        .shared-image {
-            width: 100%;
-            border-radius: 12px;
-            margin-top: 0.75rem;
-        }
-        .file-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
         .install-btn {
             background: rgba(255,255,255,0.25);
             color: #fff;
@@ -126,30 +113,15 @@
             });
         }
 
-        // Listen for shared content from SW
-        navigator.serviceWorker?.addEventListener('message', (e) => {
-            if (e.data?.type === 'SHARED_CONTENT') {
-                displayShared(e.data.payload);
-            }
-        });
-
-        // On page load, check for shared data
-        window.addEventListener('load', async () => {
+        // On page load, check URL params for shared data (GET-based share target)
+        window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(location.search);
-            if (params.has('shared')) {
-                // Wait a moment for SW to store data
-                await new Promise((r) => setTimeout(r, 300));
-                try {
-                    const cache = await caches.open('mindflow-v1');
-                    const resp = await cache.match('/shared-data');
-                    if (resp) {
-                        const data = await resp.json();
-                        displayShared(data);
-                        await cache.delete('/shared-data');
-                    }
-                } catch (err) {
-                    console.error('Failed to load shared data:', err);
-                }
+            const title = params.get('title') || '';
+            const text = params.get('text') || '';
+            const url = params.get('url') || '';
+
+            if (title || text || url) {
+                displayShared({ title, text, url });
                 // Clean URL
                 history.replaceState(null, '', '/');
             }
@@ -175,20 +147,6 @@
                     <a href="${escapeHtml(data.url)}" target="_blank">${escapeHtml(data.url)}</a>
                 </div>`;
             }
-            if (data.files && data.files.length > 0) {
-                for (const file of data.files) {
-                    if (file.type && file.type.startsWith('image/')) {
-                        const blob = new Blob(
-                            [new Uint8Array(file.data)],
-                            { type: file.type }
-                        );
-                        const url = URL.createObjectURL(blob);
-                        html += `<img class="shared-image" src="${url}" alt="${escapeHtml(file.name)}">`;
-                    } else {
-                        html += `<div class="file-item">&#128206; ${escapeHtml(file.name)} (${formatSize(file.size)})</div>`;
-                    }
-                }
-            }
 
             if (!html) {
                 html = '<p style="opacity:0.7">빈 공유 데이터를 받았습니다.</p>';
@@ -202,12 +160,6 @@
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
-        }
-
-        function formatSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / 1048576).toFixed(1) + ' MB';
         }
 
         // PWA Install prompt
