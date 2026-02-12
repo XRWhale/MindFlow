@@ -106,6 +106,34 @@
     <button class="install-btn hidden" id="installBtn">앱 설치하기</button>
 
     <script>
+        const STORAGE_KEY = 'mindflow_items';
+
+        // localStorage helpers
+        function getItems() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+            catch { return []; }
+        }
+
+        function saveItems(items) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+
+        function addItem(title, text, url) {
+            const items = getItems();
+            // Remove duplicate URL
+            const filtered = url ? items.filter((item) => item.url !== url) : items;
+            // Prepend new item
+            filtered.unshift({
+                id: crypto.randomUUID(),
+                title,
+                text,
+                url,
+                createdAt: Date.now()
+            });
+            saveItems(filtered);
+            return filtered;
+        }
+
         // Register Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js').then((reg) => {
@@ -113,47 +141,54 @@
             });
         }
 
-        // On page load, check URL params for shared data (GET-based share target)
+        // On page load
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(location.search);
             const title = params.get('title') || '';
             const text = params.get('text') || '';
             const url = params.get('url') || '';
 
+            // New share incoming
             if (title || text || url) {
-                displayShared({ title, text, url });
-                // Clean URL
+                addItem(title, text, url);
                 history.replaceState(null, '', '/');
             }
+
+            // Render all saved items
+            renderItems();
         });
 
-        function displayShared(data) {
+        function renderItems() {
             const container = document.getElementById('sharedContent');
             const empty = document.getElementById('emptyState');
+            const items = getItems();
+
+            if (items.length === 0) {
+                if (empty) empty.classList.remove('hidden');
+                return;
+            }
+
             if (empty) empty.classList.add('hidden');
+            for (const item of items) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                let html = '';
 
-            const card = document.createElement('div');
-            card.className = 'card';
-            let html = '';
+                if (item.title) {
+                    html += `<h2>${escapeHtml(item.title)}</h2>`;
+                }
+                if (item.text) {
+                    html += `<div class="shared-text">${escapeHtml(item.text)}</div>`;
+                }
+                if (item.url) {
+                    html += `<div class="shared-url" style="margin-top:0.5rem">
+                        <a href="${escapeHtml(item.url)}" target="_blank">${escapeHtml(item.url)}</a>
+                    </div>`;
+                }
 
-            if (data.title) {
-                html += `<h2>${escapeHtml(data.title)}</h2>`;
+                card.innerHTML = html;
+                container.appendChild(card);
             }
-            if (data.text) {
-                html += `<div class="shared-text">${escapeHtml(data.text)}</div>`;
-            }
-            if (data.url) {
-                html += `<div class="shared-url" style="margin-top:0.5rem">
-                    <a href="${escapeHtml(data.url)}" target="_blank">${escapeHtml(data.url)}</a>
-                </div>`;
-            }
-
-            if (!html) {
-                html = '<p style="opacity:0.7">빈 공유 데이터를 받았습니다.</p>';
-            }
-
-            card.innerHTML = html;
-            container.prepend(card);
         }
 
         function escapeHtml(str) {
