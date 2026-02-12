@@ -19,198 +19,96 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: 2rem 1rem;
         }
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-        header p {
-            opacity: 0.8;
-            margin-top: 0.5rem;
-            font-size: 0.95rem;
-        }
-        .card {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 1.5rem;
+        header { text-align: center; margin-bottom: 2.5rem; }
+        header h1 { font-size: 2.5rem; font-weight: 700; }
+        header p { opacity: 0.8; margin-top: 0.5rem; font-size: 0.95rem; }
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
             width: 100%;
-            max-width: 480px;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 320px;
         }
-        .card h2 {
-            font-size: 1.1rem;
-            margin-bottom: 0.75rem;
-            opacity: 0.9;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            opacity: 0.7;
-        }
-        .empty-state .icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        .shared-text {
-            word-break: break-word;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-        .shared-url a {
-            color: #ffd700;
-            text-decoration: underline;
-            word-break: break-all;
-        }
-        .install-btn {
-            background: rgba(255,255,255,0.25);
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(12px);
             color: #fff;
-            border: 1px solid rgba(255,255,255,0.4);
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-size: 1rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 1rem;
+            border-radius: 14px;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
         }
-        .install-btn:hover { background: rgba(255,255,255,0.35); }
-        .install-btn:active { transform: scale(0.97); }
+        .nav-btn:hover { background: rgba(255,255,255,0.3); }
+        .nav-btn:active { transform: scale(0.97); }
+        .nav-btn .icon { font-size: 1.3rem; }
+        .install-btn {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            border: 1px dashed rgba(255,255,255,0.3);
+            padding: 0.75rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
         .hidden { display: none; }
-        #sharedContent .card { animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body>
     <header>
         <h1>MindFlow</h1>
-        <p>다른 앱에서 공유하기를 눌러 콘텐츠를 보내보세요</p>
+        <p>나의 관심사를 모으고 분석하기</p>
     </header>
 
-    <div id="sharedContent">
-        <div class="empty-state" id="emptyState">
-            <div class="icon">&#128233;</div>
-            <p>아직 공유된 콘텐츠가 없습니다.<br>다른 앱에서 공유하기를 눌러보세요!</p>
-        </div>
+    <div class="nav-buttons">
+        <a href="/home" class="nav-btn"><span class="icon">&#128451;</span> 보관함 보기</a>
+        <a href="/report" class="nav-btn"><span class="icon">&#129302;</span> AI 리포트 보기</a>
+        <div class="install-btn hidden" id="installBtn">&#8987; 앱 설치하기</div>
     </div>
 
-    <button class="install-btn hidden" id="installBtn">앱 설치하기</button>
-
-    <script>
-        const STORAGE_KEY = 'mindflow_items';
-
-        // localStorage helpers
-        function getItems() {
-            try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-            catch { return []; }
-        }
-
-        function saveItems(items) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-        }
-
-        function addItem(title, text, url) {
-            const items = getItems();
-            // Remove duplicate URL
-            const filtered = url ? items.filter((item) => item.url !== url) : items;
-            // Prepend new item
-            filtered.unshift({
-                id: crypto.randomUUID(),
-                title,
-                text,
-                url,
-                createdAt: Date.now()
-            });
-            saveItems(filtered);
-            return filtered;
-        }
+    <script type="module">
+        import { addItem } from '/js/storage.js';
 
         // Register Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then((reg) => {
-                console.log('SW registered:', reg.scope);
-            });
+            navigator.serviceWorker.register('/sw.js');
         }
 
-        // On page load
-        window.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(location.search);
-            const title = params.get('title') || '';
-            const text = params.get('text') || '';
-            const url = params.get('url') || '';
+        // Handle incoming share
+        const params = new URLSearchParams(location.search);
+        const title = params.get('title') || '';
+        const text = params.get('text') || '';
+        const url = params.get('url') || '';
 
-            // New share incoming → save & go to home
-            if (title || text || url) {
-                addItem(title, text, url);
-                location.replace('/home');
-                return;
-            }
-
-            // No share params → go to home
+        if (title || text || url) {
+            addItem(title, text, url);
             location.replace('/home');
-        });
-
-        function renderItems() {
-            const container = document.getElementById('sharedContent');
-            const empty = document.getElementById('emptyState');
-            const items = getItems();
-
-            if (items.length === 0) {
-                if (empty) empty.classList.remove('hidden');
-                return;
-            }
-
-            if (empty) empty.classList.add('hidden');
-            for (const item of items) {
-                const card = document.createElement('div');
-                card.className = 'card';
-                let html = '';
-
-                if (item.title) {
-                    html += `<h2>${escapeHtml(item.title)}</h2>`;
-                }
-                if (item.text) {
-                    html += `<div class="shared-text">${escapeHtml(item.text)}</div>`;
-                }
-                if (item.url) {
-                    html += `<div class="shared-url" style="margin-top:0.5rem">
-                        <a href="${escapeHtml(item.url)}" target="_blank">${escapeHtml(item.url)}</a>
-                    </div>`;
-                }
-
-                card.innerHTML = html;
-                container.appendChild(card);
-            }
         }
 
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
-        // PWA Install prompt
+        // PWA Install
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             document.getElementById('installBtn').classList.remove('hidden');
         });
-
         document.getElementById('installBtn').addEventListener('click', async () => {
             if (!deferredPrompt) return;
             deferredPrompt.prompt();
-            const result = await deferredPrompt.userChoice;
-            console.log('Install:', result.outcome);
+            await deferredPrompt.userChoice;
             deferredPrompt = null;
             document.getElementById('installBtn').classList.add('hidden');
         });

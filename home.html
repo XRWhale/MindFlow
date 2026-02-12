@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindFlow</title>
+    <title>MindFlow - 보관함</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -19,100 +16,126 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem 6rem;
         }
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        header h1 { font-size: 2rem; font-weight: 700; }
-        header p { opacity: 0.8; margin-top: 0.5rem; font-size: 0.95rem; }
-        .count { font-size: 0.85rem; opacity: 0.6; margin-top: 0.25rem; }
 
+        /* Top bar */
+        .top-bar {
+            width: 100%; max-width: 480px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .top-bar h1 { font-size: 1.5rem; font-weight: 700; }
+        .top-bar .count { font-size: 0.85rem; opacity: 0.6; }
+        .back-link {
+            color: #fff; text-decoration: none; font-size: 0.9rem; opacity: 0.7;
+        }
+        .back-link:hover { opacity: 1; }
+
+        /* Card list */
         #cardList { width: 100%; max-width: 480px; }
 
         .card {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.12);
             backdrop-filter: blur(12px);
             border-radius: 16px;
-            padding: 1.25rem;
+            padding: 1rem 1.1rem;
             width: 100%;
             margin-bottom: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.15);
             animation: slideUp 0.3s ease-out;
-            position: relative;
+        }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
         }
         .card-title {
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-            padding-right: 2.5rem;
+            font-size: 1rem; font-weight: 600;
+            flex: 1; padding-right: 0.5rem;
+            line-height: 1.4;
         }
         .card-text {
-            word-break: break-word;
-            line-height: 1.5;
-            font-size: 0.9rem;
-            opacity: 0.9;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            word-break: break-word; line-height: 1.5; font-size: 0.88rem;
+            opacity: 0.85; margin-top: 0.4rem;
+            display: -webkit-box; -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical; overflow: hidden;
         }
-        .card-url {
-            margin-top: 0.5rem;
-        }
+        .card-url { margin-top: 0.4rem; }
         .card-url a {
-            color: #ffd700;
-            text-decoration: none;
-            font-size: 0.85rem;
+            color: #ffd700; text-decoration: none; font-size: 0.82rem;
             word-break: break-all;
         }
         .card-url a:hover { text-decoration: underline; }
-        .card-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.75rem;
-            padding-top: 0.6rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
+
+        /* OG image */
+        .card-og-image {
+            width: 100%; border-radius: 10px; margin-top: 0.6rem;
+            max-height: 220px; object-fit: cover;
         }
-        .card-time {
-            font-size: 0.8rem;
-            opacity: 0.5;
+
+        /* Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.08) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+        .skeleton-img { width: 100%; height: 160px; margin-top: 0.6rem; border-radius: 10px; }
+        .skeleton-text { height: 14px; width: 70%; margin-top: 0.5rem; }
+        @keyframes shimmer { to { background-position: -200% 0; } }
+
+        /* Meta row */
+        .card-meta {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 0.6rem; padding-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .card-time { font-size: 0.78rem; opacity: 0.45; }
+        .card-source {
+            font-size: 0.72rem; opacity: 0.5;
+            background: rgba(255,255,255,0.1); padding: 0.15rem 0.5rem;
+            border-radius: 20px;
         }
         .delete-btn {
-            background: none;
-            border: none;
-            color: rgba(255,255,255,0.5);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: 8px;
-            transition: all 0.15s;
+            background: none; border: none; color: rgba(255,255,255,0.4);
+            font-size: 1.1rem; cursor: pointer; padding: 0.2rem 0.4rem;
+            border-radius: 8px; transition: all 0.15s;
         }
         .delete-btn:hover { background: rgba(255,255,255,0.1); color: #ff6b6b; }
         .delete-btn:active { transform: scale(0.9); }
 
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            opacity: 0.7;
-        }
+        .empty-state { text-align: center; padding: 3rem 1rem; opacity: 0.7; }
         .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
         .hidden { display: none; }
 
+        /* Bottom nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(30,20,60,0.85); backdrop-filter: blur(12px);
+            display: flex; justify-content: center; gap: 2rem;
+            padding: 0.75rem 1rem; padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .bottom-nav a {
+            color: #fff; text-decoration: none; font-size: 0.82rem;
+            opacity: 0.6; text-align: center; display: flex;
+            flex-direction: column; align-items: center; gap: 0.2rem;
+        }
+        .bottom-nav a.active { opacity: 1; }
+        .bottom-nav a .icon { font-size: 1.3rem; }
+
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>MindFlow</h1>
-        <p>공유된 콘텐츠 목록</p>
-        <div class="count" id="itemCount"></div>
-    </header>
+    <div class="top-bar">
+        <div>
+            <h1>&#128451; 보관함</h1>
+            <div class="count" id="itemCount"></div>
+        </div>
+    </div>
 
     <div id="cardList">
         <div class="empty-state" id="emptyState">
@@ -121,105 +144,144 @@
         </div>
     </div>
 
-    <script>
-        const STORAGE_KEY = 'mindflow_items';
+    <nav class="bottom-nav">
+        <a href="/"><span class="icon">&#127968;</span>홈</a>
+        <a href="/home" class="active"><span class="icon">&#128451;</span>보관함</a>
+        <a href="/report"><span class="icon">&#129302;</span>리포트</a>
+    </nav>
 
-        function getItems() {
-            try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-            catch { return []; }
-        }
+    <script type="module">
+        import { getItems, deleteItem, updateItem, timeAgo, escapeHtml } from '/js/storage.js';
+        import { resolveAndUpdate } from '/js/resolve.js';
 
-        function saveItems(items) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-        }
-
-        function deleteItem(id) {
-            const items = getItems().filter((item) => item.id !== id);
-            saveItems(items);
-            render();
-        }
-
-        function timeAgo(ts) {
-            const diff = Math.floor((Date.now() - ts) / 1000);
-            if (diff < 5) return '방금 전';
-            if (diff < 60) return `${diff}초 전`;
-            const min = Math.floor(diff / 60);
-            if (min < 60) return `${min}분 전`;
-            const hr = Math.floor(min / 60);
-            if (hr < 24) return `${hr}시간 전`;
-            const day = Math.floor(hr / 24);
-            if (day < 30) return `${day}일 전`;
-            const mon = Math.floor(day / 30);
-            if (mon < 12) return `${mon}개월 전`;
-            return `${Math.floor(mon / 12)}년 전`;
-        }
-
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
+        const list = document.getElementById('cardList');
+        const empty = document.getElementById('emptyState');
+        const countEl = document.getElementById('itemCount');
 
         function render() {
-            const list = document.getElementById('cardList');
-            const empty = document.getElementById('emptyState');
-            const countEl = document.getElementById('itemCount');
-            const items = getItems();
-
-            // Clear existing cards (keep empty state node)
             list.querySelectorAll('.card').forEach((c) => c.remove());
+            const items = getItems();
 
             if (items.length === 0) {
                 empty.classList.remove('hidden');
                 countEl.textContent = '';
                 return;
             }
-
             empty.classList.add('hidden');
             countEl.textContent = `총 ${items.length}개`;
 
             for (const item of items) {
-                const card = document.createElement('div');
-                card.className = 'card';
-
-                let html = '';
-
-                if (item.title) {
-                    html += `<div class="card-title">${escapeHtml(item.title)}</div>`;
-                }
-                if (item.text) {
-                    html += `<div class="card-text">${escapeHtml(item.text)}</div>`;
-                }
-                if (item.url) {
-                    html += `<div class="card-url"><a href="${escapeHtml(item.url)}" target="_blank">${escapeHtml(item.url)}</a></div>`;
-                }
-
-                html += `<div class="card-meta">
-                    <span class="card-time">${timeAgo(item.createdAt)}</span>
-                    <button class="delete-btn" data-id="${item.id}" title="삭제">&#128465;</button>
-                </div>`;
-
-                card.innerHTML = html;
-                list.appendChild(card);
+                list.appendChild(buildCard(item));
             }
         }
 
-        // Delete handler (event delegation)
-        document.getElementById('cardList').addEventListener('click', (e) => {
+        function buildCard(item) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.id = item.id;
+
+            const displayTitle = item.ogTitle || item.title || '';
+            const displayText = item.ogDescription || item.text || '';
+            const needsResolve = item.url && !item.resolved;
+
+            let html = '<div class="card-header">';
+            html += `<div class="card-title">${escapeHtml(displayTitle) || '<span style="opacity:0.5">(제목 없음)</span>'}</div>`;
+            html += `<button class="delete-btn" data-id="${item.id}" title="삭제">&#128465;</button>`;
+            html += '</div>';
+
+            if (displayText) {
+                html += `<div class="card-text">${escapeHtml(displayText)}</div>`;
+            }
+            if (item.url) {
+                html += `<div class="card-url"><a href="${escapeHtml(item.url)}" target="_blank">${escapeHtml(item.url)}</a></div>`;
+            }
+
+            // OG image or skeleton
+            if (item.ogImage) {
+                html += `<img class="card-og-image" src="${escapeHtml(item.ogImage)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
+            } else if (needsResolve) {
+                html += `<div class="skeleton skeleton-img" data-slot="image"></div>`;
+                html += `<div class="skeleton skeleton-text" data-slot="text"></div>`;
+            }
+
+            // Source badge + time
+            html += '<div class="card-meta">';
+            html += `<span class="card-time">${timeAgo(item.createdAt)}</span>`;
+            if (item.ogSource) {
+                html += `<span class="card-source">${escapeHtml(item.ogSource)}</span>`;
+            }
+            html += '</div>';
+
+            card.innerHTML = html;
+
+            // Resolve metadata if needed
+            if (needsResolve) {
+                resolveAndUpdate(item.id, item.url).then((meta) => {
+                    if (!meta) {
+                        // Remove skeletons on failure
+                        card.querySelectorAll('.skeleton').forEach((s) => s.remove());
+                        return;
+                    }
+                    // Update card in-place
+                    const titleEl = card.querySelector('.card-title');
+                    if (meta.title && titleEl) titleEl.textContent = meta.title;
+
+                    const textEl = card.querySelector('.card-text');
+                    if (meta.description) {
+                        if (textEl) { textEl.textContent = meta.description; }
+                        else {
+                            const div = document.createElement('div');
+                            div.className = 'card-text';
+                            div.textContent = meta.description;
+                            card.querySelector('.card-url')?.before(div);
+                        }
+                    }
+
+                    // Replace skeleton with image
+                    card.querySelectorAll('.skeleton').forEach((s) => s.remove());
+                    if (meta.image) {
+                        const img = document.createElement('img');
+                        img.className = 'card-og-image';
+                        img.src = meta.image;
+                        img.loading = 'lazy';
+                        img.onerror = () => img.style.display = 'none';
+                        const metaRow = card.querySelector('.card-meta');
+                        metaRow?.before(img);
+                    }
+
+                    // Source badge
+                    if (meta.source) {
+                        const existing = card.querySelector('.card-source');
+                        if (existing) { existing.textContent = meta.source; }
+                        else {
+                            const badge = document.createElement('span');
+                            badge.className = 'card-source';
+                            badge.textContent = meta.source;
+                            card.querySelector('.card-meta')?.appendChild(badge);
+                        }
+                    }
+                });
+            }
+
+            return card;
+        }
+
+        // Delete (event delegation)
+        list.addEventListener('click', (e) => {
             const btn = e.target.closest('.delete-btn');
             if (!btn) return;
             const id = btn.dataset.id;
-            if (id) deleteItem(id);
+            if (id) { deleteItem(id); render(); }
         });
 
-        // Update relative times every minute
+        // Update times every minute
         setInterval(() => {
-            document.querySelectorAll('.card-time').forEach((el) => {
-                const card = el.closest('.card');
-                const btn = card?.querySelector('.delete-btn');
-                if (!btn) return;
-                const item = getItems().find((i) => i.id === btn.dataset.id);
-                if (item) el.textContent = timeAgo(item.createdAt);
+            const items = getItems();
+            document.querySelectorAll('.card').forEach((card) => {
+                const id = card.dataset.id;
+                const item = items.find((i) => i.id === id);
+                const timeEl = card.querySelector('.card-time');
+                if (item && timeEl) timeEl.textContent = timeAgo(item.createdAt);
             });
         }, 60000);
 

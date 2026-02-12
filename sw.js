@@ -1,5 +1,5 @@
-const CACHE_NAME = 'mindflow-v2';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE_NAME = 'mindflow-v3';
+const ASSETS = ['/', '/index.html', '/home.html', '/report.html', '/manifest.json', '/js/storage.js', '/js/resolve.js', '/js/report.js'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
@@ -16,6 +16,13 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  const url = new URL(e.request.url);
+
+  // Never cache API calls or external requests
+  if (url.pathname.startsWith('/api/') || url.origin !== self.location.origin) {
+    return;
+  }
+
   e.respondWith(
     caches.match(e.request).then((cached) => cached || fetch(e.request))
   );
