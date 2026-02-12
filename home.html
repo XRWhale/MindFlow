@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFlow</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        header h1 { font-size: 2rem; font-weight: 700; }
+        header p { opacity: 0.8; margin-top: 0.5rem; font-size: 0.95rem; }
+        .count { font-size: 0.85rem; opacity: 0.6; margin-top: 0.25rem; }
+
+        #cardList { width: 100%; max-width: 480px; }
+
+        .card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 1.25rem;
+            width: 100%;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: slideUp 0.3s ease-out;
+            position: relative;
+        }
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            padding-right: 2.5rem;
+        }
+        .card-text {
+            word-break: break-word;
+            line-height: 1.5;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-url {
+            margin-top: 0.5rem;
+        }
+        .card-url a {
+            color: #ffd700;
+            text-decoration: none;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+        .card-url a:hover { text-decoration: underline; }
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-time {
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+        .delete-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+        .delete-btn:hover { background: rgba(255,255,255,0.1); color: #ff6b6b; }
+        .delete-btn:active { transform: scale(0.9); }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            opacity: 0.7;
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .hidden { display: none; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MindFlow</h1>
+        <p>공유된 콘텐츠 목록</p>
+        <div class="count" id="itemCount"></div>
+    </header>
+
+    <div id="cardList">
+        <div class="empty-state" id="emptyState">
+            <div class="icon">&#128233;</div>
+            <p>아직 공유된 콘텐츠가 없습니다.<br>다른 앱에서 공유하기를 눌러보세요!</p>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'mindflow_items';
+
+        function getItems() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+            catch { return []; }
+        }
+
+        function saveItems(items) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        }
+
+        function deleteItem(id) {
+            const items = getItems().filter((item) => item.id !== id);
+            saveItems(items);
+            render();
+        }
+
+        function timeAgo(ts) {
+            const diff = Math.floor((Date.now() - ts) / 1000);
+            if (diff < 5) return '방금 전';
+            if (diff < 60) return `${diff}초 전`;
+            const min = Math.floor(diff / 60);
+            if (min < 60) return `${min}분 전`;
+            const hr = Math.floor(min / 60);
+            if (hr < 24) return `${hr}시간 전`;
+            const day = Math.floor(hr / 24);
+            if (day < 30) return `${day}일 전`;
+            const mon = Math.floor(day / 30);
+            if (mon < 12) return `${mon}개월 전`;
+            return `${Math.floor(mon / 12)}년 전`;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function render() {
+            const list = document.getElementById('cardList');
+            const empty = document.getElementById('emptyState');
+            const countEl = document.getElementById('itemCount');
+            const items = getItems();
+
+            // Clear existing cards (keep empty state node)
+            list.querySelectorAll('.card').forEach((c) => c.remove());
+
+            if (items.length === 0) {
+                empty.classList.remove('hidden');
+                countEl.textContent = '';
+                return;
+            }
+
+            empty.classList.add('hidden');
+            countEl.textContent = `총 ${items.length}개`;
+
+            for (const item of items) {
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                let html = '';
+
+                if (item.title) {
+                    html += `<div class="card-title">${escapeHtml(item.title)}</div>`;
+                }
+                if (item.text) {
+                    html += `<div class="card-text">${escapeHtml(item.text)}</div>`;
+                }
+                if (item.url) {
+                    html += `<div class="card-url"><a href="${escapeHtml(item.url)}" target="_blank">${escapeHtml(item.url)}</a></div>`;
+                }
+
+                html += `<div class="card-meta">
+                    <span class="card-time">${timeAgo(item.createdAt)}</span>
+                    <button class="delete-btn" data-id="${item.id}" title="삭제">&#128465;</button>
+                </div>`;
+
+                card.innerHTML = html;
+                list.appendChild(card);
+            }
+        }
+
+        // Delete handler (event delegation)
+        document.getElementById('cardList').addEventListener('click', (e) => {
+            const btn = e.target.closest('.delete-btn');
+            if (!btn) return;
+            const id = btn.dataset.id;
+            if (id) deleteItem(id);
+        });
+
+        // Update relative times every minute
+        setInterval(() => {
+            document.querySelectorAll('.card-time').forEach((el) => {
+                const card = el.closest('.card');
+                const btn = card?.querySelector('.delete-btn');
+                if (!btn) return;
+                const item = getItems().find((i) => i.id === btn.dataset.id);
+                if (item) el.textContent = timeAgo(item.createdAt);
+            });
+        }, 60000);
+
+        render();
+    </script>
+</body>
+</html>

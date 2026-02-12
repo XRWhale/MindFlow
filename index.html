@@ -148,14 +148,15 @@
             const text = params.get('text') || '';
             const url = params.get('url') || '';
 
-            // New share incoming
+            // New share incoming → save & go to home
             if (title || text || url) {
                 addItem(title, text, url);
-                history.replaceState(null, '', '/');
+                location.replace('/home');
+                return;
             }
 
-            // Render all saved items
-            renderItems();
+            // No share params → go to home
+            location.replace('/home');
         });
 
         function renderItems() {
