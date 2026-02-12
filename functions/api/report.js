@@ -3,7 +3,11 @@ export async function onRequestPost(context) {
     const apiKey = env.OPENAI_API_KEY;
 
     if (!apiKey) {
-        return jsonResponse({ error: 'OpenAI API key not configured' }, 500);
+        const envKeys = Object.keys(env).filter((k) => typeof env[k] === 'string');
+        return jsonResponse({
+            error: 'OpenAI API key not configured',
+            debug: `Available env keys: [${envKeys.join(', ')}]`
+        }, 500);
     }
 
     let body;
