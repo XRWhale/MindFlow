@@ -15,7 +15,8 @@ export async function resolveAndUpdate(itemId, url) {
             ogDescription: meta.description || '',
             ogImage: meta.image || '',
             ogSource: meta.source || '',
-            resolved: true
+            resolved: true,
+            resolveV: 2
         });
         return meta;
     } catch {

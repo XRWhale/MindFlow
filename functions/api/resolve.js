@@ -1,5 +1,5 @@
 export async function onRequestGet(context) {
-    const { request } = context;
+    const { request, env } = context;
     const url = new URL(request.url).searchParams.get('url');
 
     if (!url) {
@@ -12,7 +12,40 @@ export async function onRequestGet(context) {
         return jsonResponse({ error: 'Invalid URL' }, 400);
     }
 
+    // Detect source from URL
+    let source = 'web';
+    if (url.includes('instagram.com')) source = 'instagram';
+    else if (url.includes('youtube.com') || url.includes('youtu.be')) source = 'youtube';
+    else if (url.includes('twitter.com') || url.includes('x.com')) source = 'twitter';
+    else if (url.includes('tiktok.com')) source = 'tiktok';
+
     try {
+        // Use Meta oEmbed API for Instagram URLs
+        if (source === 'instagram') {
+            const appId = env.META_APP_ID;
+            const appSecret = env.META_APP_SECRET;
+
+            if (appId && appSecret) {
+                const accessToken = `${appId}|${appSecret}`;
+                const oembedUrl = `https://graph.facebook.com/v21.0/instagram_oembed?url=${encodeURIComponent(url)}&access_token=${accessToken}&maxwidth=658&omitscript=true`;
+
+                const oembedRes = await fetch(oembedUrl);
+                if (oembedRes.ok) {
+                    const data = await oembedRes.json();
+                    if (!data.error) {
+                        return jsonResponse({
+                            title: data.author_name ? `@${data.author_name}` : '',
+                            description: data.title || '',
+                            image: data.thumbnail_url || '',
+                            source: 'instagram'
+                        });
+                    }
+                }
+                // Fall through to OG scraping if oEmbed fails
+            }
+        }
+
+        // Fallback: OG tag scraping for non-Instagram or if oEmbed failed
         const res = await fetch(url, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (compatible; MindFlowBot/1.0)',
@@ -31,13 +64,6 @@ export async function onRequestGet(context) {
         const title = extractMeta(html, 'og:title');
         const description = extractMeta(html, 'og:description');
         const image = extractMeta(html, 'og:image');
-
-        // Detect source from URL
-        let source = 'web';
-        if (url.includes('instagram.com')) source = 'instagram';
-        else if (url.includes('youtube.com') || url.includes('youtu.be')) source = 'youtube';
-        else if (url.includes('twitter.com') || url.includes('x.com')) source = 'twitter';
-        else if (url.includes('tiktok.com')) source = 'tiktok';
 
         return jsonResponse({ title, description, image, source });
 
