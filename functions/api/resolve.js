@@ -66,7 +66,12 @@ export async function onRequestGet(context) {
 
         const title = extractMeta(html, 'og:title');
         const description = extractMeta(html, 'og:description');
-        const image = extractMeta(html, 'og:image');
+        let image = extractMeta(html, 'og:image');
+
+        // Proxy Instagram images to avoid CDN 403
+        if (source === 'instagram' && image) {
+            image = `/api/image-proxy?url=${encodeURIComponent(image)}`;
+        }
 
         return jsonResponse({ title, description, image, source });
 
