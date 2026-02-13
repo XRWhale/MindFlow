@@ -230,7 +230,7 @@
             const needsResolve = item.url && !item.resolved;
             // Re-resolve Instagram items that were resolved before oEmbed was added
             const needsReResolve = item.resolved && item.resolveV !== 5
-                && item.url && item.url.includes('instagram.com');
+                && item.url && item.url.includes('instagram.com') && !item.ogImage;
 
             let html = '';
 
