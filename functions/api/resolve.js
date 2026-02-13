@@ -33,10 +33,13 @@ export async function onRequestGet(context) {
                 if (oembedRes.ok) {
                     const data = await oembedRes.json();
                     if (!data.error) {
+                        const image = data.thumbnail_url
+                            ? `/api/image-proxy?url=${encodeURIComponent(data.thumbnail_url)}`
+                            : '';
                         return jsonResponse({
                             title: data.author_name ? `@${data.author_name}` : '',
                             description: data.title || '',
-                            image: data.thumbnail_url || '',
+                            image,
                             source: 'instagram'
                         });
                     }
