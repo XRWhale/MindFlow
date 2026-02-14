@@ -101,7 +101,6 @@
 
         if (title || url) {
             addItem({ title, url });
-            location.replace('/home');
         }
 
         const INTENT_STYLES = {
@@ -188,6 +187,7 @@
             deferredPrompt = null;
             document.getElementById('installBtn').classList.add('hidden');
         });
+
     </script>
 </body>
 </html>
