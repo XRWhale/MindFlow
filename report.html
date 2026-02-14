@@ -5,188 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MindFlow - 주간 리포트</title>
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#f6f7f8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { "primary": "#121a31" },
+                    fontFamily: { "display": ["Inter", "sans-serif"] },
+                }
+            }
+        }
+    </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 1.5rem 1rem 6rem;
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
         }
-
-        .top-bar {
-            width: 100%; max-width: 560px;
-            margin-bottom: 1.5rem;
-        }
-        .top-bar h1 { font-size: 1.5rem; font-weight: 700; }
-        .top-bar .sub { font-size: 0.85rem; opacity: 0.6; margin-top: 0.2rem; }
-
-        /* Generate button */
-        .gen-btn {
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-            width: 100%; max-width: 560px;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(12px);
-            color: #fff; border: 1px solid rgba(255,255,255,0.3);
-            padding: 1rem; border-radius: 14px;
-            font-size: 1.05rem; font-weight: 600;
-            cursor: pointer; transition: all 0.2s;
-            margin-bottom: 1rem;
-        }
-        .gen-btn:hover { background: rgba(255,255,255,0.3); }
-        .gen-btn:active { transform: scale(0.97); }
-        .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        /* Report area */
-        #reportArea { width: 100%; max-width: 560px; }
-
-        /* Section card */
-        .report-section {
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 1.2rem;
-            border: 1px solid rgba(255,255,255,0.15);
-            margin-bottom: 0.75rem;
-        }
-        .section-title {
-            font-size: 1rem; font-weight: 700;
-            margin-bottom: 0.8rem;
-            display: flex; align-items: center; gap: 0.4rem;
-        }
-
-        /* Weekly summary */
-        .weekly-summary {
-            font-size: 0.92rem; line-height: 1.7; opacity: 0.9;
-        }
-
-        /* Interest cards */
-        .interest-item {
-            display: flex; align-items: center; gap: 0.8rem;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .interest-item:last-child { border-bottom: none; }
-        .interest-rank {
-            width: 28px; height: 28px;
-            background: rgba(255,215,0,0.2); color: #ffd700;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
-        }
-        .interest-info { flex: 1; }
-        .interest-topic { font-size: 0.92rem; font-weight: 600; }
-        .interest-insight { font-size: 0.8rem; opacity: 0.6; margin-top: 0.1rem; }
-        .interest-count {
-            font-size: 0.78rem; opacity: 0.5;
-            background: rgba(255,255,255,0.1); padding: 0.1rem 0.5rem;
-            border-radius: 12px;
-        }
-
-        /* Bar chart */
-        .bar-row {
-            display: flex; align-items: center; gap: 0.6rem;
-            margin-bottom: 0.6rem;
-        }
-        .bar-row:last-child { margin-bottom: 0; }
-        .bar-label {
-            width: 36px; font-size: 0.82rem; font-weight: 600;
-            text-align: right; flex-shrink: 0;
-        }
-        .bar-track {
-            flex: 1; height: 26px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 13px; overflow: hidden;
-        }
-        .bar-fill {
-            height: 100%; border-radius: 13px;
-            transition: width 0.8s ease-out;
-            min-width: 2px;
-        }
-        .bar-fill.learn { background: linear-gradient(90deg, #64c8ff, #4a9eff); }
-        .bar-fill.execute { background: linear-gradient(90deg, #ff9664, #ff6b4a); }
-        .bar-fill.inspire { background: linear-gradient(90deg, #c864ff, #9b4aff); }
-        .bar-value {
-            width: 40px; font-size: 0.82rem; opacity: 0.7;
-            text-align: right; flex-shrink: 0;
-        }
-
-        /* Recommended items */
-        .recommend-item {
-            display: flex; align-items: flex-start; gap: 0.7rem;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            cursor: pointer; transition: opacity 0.15s;
-        }
-        .recommend-item:hover { opacity: 0.8; }
-        .recommend-item:last-child { border-bottom: none; }
-        .recommend-num {
-            width: 22px; height: 22px;
-            background: rgba(255,150,100,0.2); color: #ff9664;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 0.72rem; font-weight: 700; flex-shrink: 0; margin-top: 0.1rem;
-        }
-        .recommend-info { flex: 1; }
-        .recommend-title { font-size: 0.88rem; font-weight: 600; line-height: 1.3; }
-        .recommend-reason { font-size: 0.78rem; opacity: 0.6; margin-top: 0.15rem; }
-
-        /* Loading */
-        .loading { text-align: center; padding: 3rem 1rem; }
-        .spinner {
-            width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2);
-            border-top-color: #fff; border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .loading-text { opacity: 0.7; font-size: 0.95rem; }
-
-        /* Error */
-        .error-msg {
-            background: rgba(255,100,100,0.2); border: 1px solid rgba(255,100,100,0.3);
-            border-radius: 12px; padding: 1rem; text-align: center;
-            font-size: 0.9rem;
-        }
-
-        /* Empty */
-        .empty-state { text-align: center; padding: 3rem 1rem; opacity: 0.7; }
-        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
-
-        /* Bottom nav */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(30,20,60,0.85); backdrop-filter: blur(12px);
-            display: flex; justify-content: center; gap: 2rem;
-            padding: 0.75rem 1rem; padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .bottom-nav a {
-            color: #fff; text-decoration: none; font-size: 0.82rem;
-            opacity: 0.6; text-align: center; display: flex;
-            flex-direction: column; align-items: center; gap: 0.2rem;
-        }
-        .bottom-nav a.active { opacity: 1; }
-        .bottom-nav a .icon { font-size: 1.3rem; }
     </style>
 </head>
-<body>
-    <div class="top-bar">
-        <h1>&#129302; 주간 리포트</h1>
-        <div class="sub">이번 주 저장한 콘텐츠를 AI가 분석합니다</div>
+<body class="bg-[#f6f7f8] text-[#121a31] min-h-screen">
+
+    <div class="max-w-md mx-auto min-h-screen flex flex-col pb-28">
+
+        <!-- Header -->
+        <header class="pt-12 px-8 pb-10 text-center">
+            <div class="inline-flex items-center justify-center p-3 rounded-full bg-[#121a31]/5 mb-6">
+                <span class="material-symbols-outlined text-[#121a31] text-2xl">auto_awesome</span>
+            </div>
+            <h1 class="text-3xl font-bold tracking-tight mb-2">주간 리포트</h1>
+            <p class="text-[#121a31]/50 text-sm font-medium uppercase tracking-widest">이번 주 저장한 콘텐츠를 AI가 분석합니다</p>
+        </header>
+
+        <!-- Generate Button -->
+        <div class="px-8 mb-8">
+            <button id="genBtn"
+                class="w-full py-5 bg-[#121a31] text-white rounded-full font-semibold text-sm shadow-xl shadow-[#121a31]/20 hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-symbols-outlined text-lg">bolt</span>
+                주간 리포트 생성하기
+            </button>
+        </div>
+
+        <!-- Report Area -->
+        <div id="reportArea" class="px-6"></div>
+
     </div>
 
-    <button class="gen-btn" id="genBtn">&#9889; 주간 리포트 생성하기</button>
-
-    <div id="reportArea"></div>
-
-    <nav class="bottom-nav">
-        <a href="/"><span class="icon">&#127968;</span>오늘</a>
-        <a href="/home"><span class="icon">&#128451;</span>수집함</a>
-        <a href="/report" class="active"><span class="icon">&#129302;</span>리포트</a>
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-sm bg-[#121a31]/95 backdrop-blur-xl rounded-full shadow-2xl z-50 px-2 py-2">
+        <div class="flex items-center justify-around">
+            <a href="/" class="flex flex-col items-center justify-center p-3 rounded-full text-white/40 hover:text-white/70 transition-colors">
+                <span class="material-symbols-outlined">home</span>
+            </a>
+            <a href="/home" class="flex flex-col items-center justify-center p-3 rounded-full text-white/40 hover:text-white/70 transition-colors">
+                <span class="material-symbols-outlined">grid_view</span>
+            </a>
+            <a href="/report" class="flex flex-col items-center justify-center p-3 rounded-full text-white bg-white/10">
+                <span class="material-symbols-outlined">analytics</span>
+            </a>
+        </div>
     </nav>
 
     <script type="module">
@@ -200,22 +79,27 @@
 
         function showEmpty() {
             area.innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">&#128451;</div>
-                    <p>이번 주 저장한 콘텐츠가 없습니다.<br>먼저 앱에서 콘텐츠를 공유해보세요!</p>
+                <div class="text-center py-16 opacity-60">
+                    <span class="material-symbols-outlined text-6xl block mb-4">inbox</span>
+                    <p class="text-lg">이번 주 저장한 콘텐츠가 없습니다</p>
+                    <p class="text-sm mt-1 opacity-70">먼저 앱에서 콘텐츠를 공유해보세요!</p>
                 </div>`;
         }
 
         function showLoading() {
             area.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <div class="loading-text">AI가 이번 주 콘텐츠를 분석 중입니다...</div>
+                <div class="text-center py-16">
+                    <div class="w-10 h-10 border-2 border-[#121a31]/20 border-t-[#121a31] rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-[#121a31]/60 text-sm">AI가 이번 주 콘텐츠를 분석 중입니다...</p>
                 </div>`;
         }
 
         function showError(msg) {
-            area.innerHTML = `<div class="error-msg">${escapeHtml(msg)}</div>`;
+            area.innerHTML = `
+                <div class="bg-red-50 border border-red-200 rounded-2xl p-5 text-center">
+                    <span class="material-symbols-outlined text-red-400 text-2xl mb-2 block">error</span>
+                    <p class="text-red-600 text-sm">${escapeHtml(msg)}</p>
+                </div>`;
         }
 
         function showReport(data) {
@@ -224,74 +108,106 @@
             // Weekly summary
             if (data.weekly_summary) {
                 html += `
-                    <div class="report-section">
-                        <div class="section-title">&#128203; 이번 주 요약</div>
-                        <div class="weekly-summary">${escapeHtml(data.weekly_summary)}</div>
-                    </div>`;
+                    <section class="mb-8">
+                        <h2 class="text-[#121a31]/40 text-xs font-bold uppercase tracking-widest px-2 mb-4">이번 주 요약</h2>
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-black/5">
+                            <p class="text-[#121a31]/80 text-base leading-relaxed">${escapeHtml(data.weekly_summary)}</p>
+                        </div>
+                    </section>`;
             }
 
             // Top interests
             if (data.top_interests && data.top_interests.length > 0) {
-                html += '<div class="report-section">';
-                html += '<div class="section-title">&#127775; 이번 주 관심사 Top 3</div>';
+                html += '<section class="mb-8">';
+                html += '<h2 class="text-[#121a31]/40 text-xs font-bold uppercase tracking-widest px-2 mb-4">관심사 Top 3</h2>';
+                html += '<div class="space-y-3">';
                 data.top_interests.forEach((item, idx) => {
                     html += `
-                        <div class="interest-item">
-                            <div class="interest-rank">${idx + 1}</div>
-                            <div class="interest-info">
-                                <div class="interest-topic">${escapeHtml(item.topic || '')}</div>
-                                <div class="interest-insight">${escapeHtml(item.insight || '')}</div>
+                        <div class="bg-white rounded-2xl p-5 shadow-sm border border-black/5 flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-[#121a31]/5 flex items-center justify-center text-[#121a31] font-bold text-sm flex-shrink-0">${idx + 1}</div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-semibold text-sm">${escapeHtml(item.topic || '')}</p>
+                                <p class="text-[#121a31]/50 text-xs mt-0.5">${escapeHtml(item.insight || '')}</p>
                             </div>
-                            <span class="interest-count">${item.count || 0}개</span>
+                            <span class="text-xs text-[#121a31]/40 bg-[#121a31]/5 px-2.5 py-1 rounded-full flex-shrink-0">${item.count || 0}개</span>
                         </div>`;
                 });
-                html += '</div>';
+                html += '</div></section>';
             }
 
-            // Intent ratio bar chart
+            // Intent ratio
             if (data.intent_ratio) {
                 const ratio = data.intent_ratio;
-                html += '<div class="report-section">';
-                html += '<div class="section-title">&#127919; 저장 의도 분석</div>';
+                html += '<section class="mb-8 text-center">';
+                html += '<div class="flex flex-col gap-6 py-8 border-y border-black/5">';
 
                 const entries = [
-                    { key: '배움', cls: 'learn', val: ratio['배움'] || 0 },
-                    { key: '실행', cls: 'execute', val: ratio['실행'] || 0 },
-                    { key: '영감', cls: 'inspire', val: ratio['영감'] || 0 }
+                    { key: '배움', val: ratio['배움'] || 0, color: '#1565C0' },
+                    { key: '실행', val: ratio['실행'] || 0, color: '#2E7D32' },
+                    { key: '영감', val: ratio['영감'] || 0, color: '#E65100' }
                 ];
+                const maxVal = Math.max(...entries.map(e => e.val), 0.01);
+
                 for (const e of entries) {
                     const pct = Math.round(e.val * 100);
+                    const barWidth = Math.round((e.val / maxVal) * 100);
                     html += `
-                        <div class="bar-row">
-                            <span class="bar-label">${e.key}</span>
-                            <div class="bar-track">
-                                <div class="bar-fill ${e.cls}" style="width: ${pct}%"></div>
+                        <div class="flex items-center gap-4 px-2">
+                            <span class="text-sm font-semibold w-10 text-right flex-shrink-0">${e.key}</span>
+                            <div class="flex-1 h-6 bg-[#121a31]/5 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-700" style="width:${barWidth}%; background:${e.color}"></div>
                             </div>
-                            <span class="bar-value">${pct}%</span>
+                            <span class="text-sm text-[#121a31]/50 w-10 text-right flex-shrink-0">${pct}%</span>
                         </div>`;
                 }
-                html += '</div>';
+
+                html += '</div></section>';
             }
 
             // Recommended items
             if (data.recommended_items && data.recommended_items.length > 0) {
-                html += '<div class="report-section">';
-                html += '<div class="section-title">&#128161; 다시 볼 만한 콘텐츠</div>';
+                html += '<section class="mb-8">';
+                html += '<h2 class="text-[#121a31]/40 text-xs font-bold uppercase tracking-widest px-2 mb-4">다시 볼 만한 콘텐츠</h2>';
+                html += '<div class="space-y-4">';
 
                 data.recommended_items.forEach((rec, idx) => {
                     const item = getItemById(rec.id);
                     const title = item ? (item.title || item.summary || '(제목 없음)') : '(삭제된 콘텐츠)';
-                    html += `
-                        <div class="recommend-item" ${item ? `onclick="location.href='/detail?id=${rec.id}'"` : ''}>
-                            <div class="recommend-num">${idx + 1}</div>
-                            <div class="recommend-info">
-                                <div class="recommend-title">${escapeHtml(title)}</div>
-                                <div class="recommend-reason">${escapeHtml(rec.reason || '')}</div>
-                            </div>
-                        </div>`;
+                    const thumb = item?.thumbnail;
+
+                    html += `<div class="group bg-white rounded-2xl shadow-sm border border-black/5 overflow-hidden ${item ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}" ${item ? `onclick="location.href='/detail?id=${rec.id}'"` : ''}>`;
+
+                    if (thumb) {
+                        html += `<div class="aspect-[16/9] w-full overflow-hidden">`;
+                        html += `<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="${escapeHtml(thumb)}" alt="" loading="lazy" onerror="this.parentElement.style.display='none'">`;
+                        html += `</div>`;
+                    }
+
+                    html += `<div class="p-5">`;
+                    html += `<h3 class="font-semibold text-base mb-2">${escapeHtml(title)}</h3>`;
+                    html += `<p class="text-[#121a31]/50 text-sm leading-relaxed">${escapeHtml(rec.reason || '')}</p>`;
+                    if (item) {
+                        html += `<button class="mt-3 text-[#121a31] font-bold text-xs uppercase tracking-wider flex items-center gap-1">`;
+                        html += `자세히 보기 <span class="material-symbols-outlined text-sm">arrow_forward</span>`;
+                        html += `</button>`;
+                    }
+                    html += `</div></div>`;
                 });
-                html += '</div>';
+
+                html += '</div></section>';
             }
+
+            // Bottom CTA
+            html += `
+                <section class="px-2 mt-4 mb-8">
+                    <div class="text-center mb-6">
+                        <div class="inline-block w-px h-10 bg-[#121a31]/10 mb-4"></div>
+                        <p class="text-[#121a31]/50 text-sm italic font-light">오늘의 큐레이션을 확인해보세요</p>
+                    </div>
+                    <a href="/" class="block w-full py-4 border-2 border-[#121a31] text-[#121a31] rounded-full font-bold text-sm text-center hover:bg-[#121a31] hover:text-white transition-all duration-300">
+                        오늘의 3개 보러가기
+                    </a>
+                </section>`;
 
             area.innerHTML = html;
         }
@@ -304,13 +220,13 @@
             }
 
             btn.disabled = true;
-            btn.textContent = '분석 중...';
+            btn.innerHTML = '<div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> 분석 중...';
             showLoading();
 
             try {
                 const result = await generateWeeklyReport();
                 showReport(result);
-                btn.innerHTML = '&#9889; 리포트 다시 생성하기';
+                btn.innerHTML = '<span class="material-symbols-outlined text-lg">bolt</span> 리포트 다시 생성하기';
             } catch (err) {
                 showError(err.message || '오류가 발생했습니다.');
             } finally {
