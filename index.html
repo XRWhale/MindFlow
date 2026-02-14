@@ -90,8 +90,16 @@
         const params = new URLSearchParams(location.search);
         const title = params.get('title') || '';
         const text = params.get('text') || '';
-        const url = params.get('url') || '';
-        if (title || text || url) {
+        const rawUrl = params.get('url') || '';
+
+        // Extract URL from text field (Instagram etc. put URL in text)
+        function extractUrl(str) {
+            const match = str.match(/https?:\/\/[^\s]+/);
+            return match ? match[0] : '';
+        }
+        const url = rawUrl || extractUrl(text);
+
+        if (title || url) {
             addItem({ title, url });
             location.replace('/home');
         }
