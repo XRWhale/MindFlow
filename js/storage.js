@@ -48,6 +48,29 @@ export function getItemById(id) {
     return getItems().find((item) => item.id === id) || null;
 }
 
+export function getTodayPicks(count = 3) {
+    const items = getItems().filter(i => i.resolved);
+
+    // Sort: intent=실행 + viewCount=0 first, then viewCount=0, then lowest viewCount
+    items.sort((a, b) => {
+        const aScore = (a.viewCount === 0 ? 0 : 1);
+        const bScore = (b.viewCount === 0 ? 0 : 1);
+        if (aScore !== bScore) return aScore - bScore;
+
+        // Among same viewCount tier, prioritize intent=실행
+        if (a.viewCount === 0 && b.viewCount === 0) {
+            const aExec = a.intent === '실행' ? 0 : 1;
+            const bExec = b.intent === '실행' ? 0 : 1;
+            if (aExec !== bExec) return aExec - bExec;
+        }
+
+        // Then by lowest viewCount
+        return (a.viewCount || 0) - (b.viewCount || 0);
+    });
+
+    return items.slice(0, count);
+}
+
 export function getWeeklyItems() {
     const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     return getItems().filter((item) => item.createdAt >= weekAgo);

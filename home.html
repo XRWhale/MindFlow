@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindFlow - 보관함</title>
+    <title>MindFlow - 수집함</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#667eea">
     <style>
@@ -174,7 +174,7 @@
 </head>
 <body>
     <div class="top-bar">
-        <h1>&#128451; 보관함</h1>
+        <h1>&#128451; 최근 저장한 10개</h1>
         <div class="count" id="itemCount"></div>
         <div class="ai-msg" id="aiMsg"></div>
     </div>
@@ -192,8 +192,8 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="/"><span class="icon">&#127968;</span>홈</a>
-        <a href="/home" class="active"><span class="icon">&#128451;</span>보관함</a>
+        <a href="/"><span class="icon">&#127968;</span>오늘</a>
+        <a href="/home" class="active"><span class="icon">&#128451;</span>수집함</a>
         <a href="/report"><span class="icon">&#129302;</span>리포트</a>
     </nav>
 
@@ -244,7 +244,7 @@
                 aiMsg.textContent = `AI가 자동으로 정리했어요 (${resolvedCount}개 분석 완료)`;
             }
 
-            for (const item of items) {
+            for (const item of items.slice(0, 10)) {
                 list.appendChild(buildCard(item));
             }
         }
@@ -279,9 +279,12 @@
                 html += `<div class="skeleton skeleton-text" data-slot="summary"></div>`;
             }
 
-            // Badges: category + tags + intent
+            // Badges: intent first → category → tags
             if (item.resolved && (item.category || item.tags?.length || item.intent)) {
                 html += '<div class="card-badges">';
+                if (item.intent) {
+                    html += `<span class="intent-badge" data-intent="${escapeHtml(item.intent)}">${escapeHtml(item.intent)}</span>`;
+                }
                 if (item.category) {
                     html += `<span class="category-badge">${escapeHtml(item.category)}</span>`;
                 }
@@ -289,9 +292,6 @@
                     for (const tag of item.tags) {
                         html += `<span class="tag-chip">#${escapeHtml(tag)}</span>`;
                     }
-                }
-                if (item.intent) {
-                    html += `<span class="intent-badge" data-intent="${escapeHtml(item.intent)}">${escapeHtml(item.intent)}</span>`;
                 }
                 html += '</div>';
             } else if (needsResolve) {
@@ -350,11 +350,18 @@
                         card.insertBefore(img, card.firstChild);
                     }
 
-                    // Update badges
+                    // Update badges (intent first)
                     const badgesSlot = card.querySelector('[data-slot="badges"]');
                     if (badgesSlot) {
                         const badgesContainer = badgesSlot.parentElement;
                         badgesSlot.remove();
+                        if (result.intent) {
+                            const i = document.createElement('span');
+                            i.className = 'intent-badge';
+                            i.dataset.intent = result.intent;
+                            i.textContent = result.intent;
+                            badgesContainer.appendChild(i);
+                        }
                         if (result.category) {
                             const cat = document.createElement('span');
                             cat.className = 'category-badge';
@@ -368,13 +375,6 @@
                                 t.textContent = '#' + tag;
                                 badgesContainer.appendChild(t);
                             }
-                        }
-                        if (result.intent) {
-                            const i = document.createElement('span');
-                            i.className = 'intent-badge';
-                            i.dataset.intent = result.intent;
-                            i.textContent = result.intent;
-                            badgesContainer.appendChild(i);
                         }
                     }
 
