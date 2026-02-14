@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindFlow - AI 리포트</title>
+    <title>MindFlow - 주간 리포트</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#667eea">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -22,35 +21,10 @@
 
         .top-bar {
             width: 100%; max-width: 560px;
-            display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 1.5rem;
         }
         .top-bar h1 { font-size: 1.5rem; font-weight: 700; }
         .top-bar .sub { font-size: 0.85rem; opacity: 0.6; margin-top: 0.2rem; }
-
-        /* Report container */
-        #reportArea {
-            width: 100%; max-width: 560px;
-        }
-
-        .report-content {
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255,255,255,0.15);
-            line-height: 1.7;
-            font-size: 0.92rem;
-        }
-        .report-content h1 { font-size: 1.3rem; margin: 1.2rem 0 0.5rem; font-weight: 700; }
-        .report-content h2 { font-size: 1.15rem; margin: 1rem 0 0.4rem; font-weight: 600; }
-        .report-content h3 { font-size: 1rem; margin: 0.8rem 0 0.3rem; font-weight: 600; }
-        .report-content p { margin-bottom: 0.6rem; }
-        .report-content ul, .report-content ol { margin: 0.4rem 0 0.8rem 1.2rem; }
-        .report-content li { margin-bottom: 0.3rem; }
-        .report-content strong { color: #ffd700; }
-        .report-content hr { border: none; border-top: 1px solid rgba(255,255,255,0.15); margin: 1rem 0; }
-        .report-content code { background: rgba(0,0,0,0.2); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85em; }
 
         /* Generate button */
         .gen-btn {
@@ -68,10 +42,100 @@
         .gen-btn:active { transform: scale(0.97); }
         .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Loading state */
-        .loading {
-            text-align: center; padding: 3rem 1rem;
+        /* Report area */
+        #reportArea { width: 100%; max-width: 560px; }
+
+        /* Section card */
+        .report-section {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 0.75rem;
         }
+        .section-title {
+            font-size: 1rem; font-weight: 700;
+            margin-bottom: 0.8rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+
+        /* Weekly summary */
+        .weekly-summary {
+            font-size: 0.92rem; line-height: 1.7; opacity: 0.9;
+        }
+
+        /* Interest cards */
+        .interest-item {
+            display: flex; align-items: center; gap: 0.8rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .interest-item:last-child { border-bottom: none; }
+        .interest-rank {
+            width: 28px; height: 28px;
+            background: rgba(255,215,0,0.2); color: #ffd700;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+        }
+        .interest-info { flex: 1; }
+        .interest-topic { font-size: 0.92rem; font-weight: 600; }
+        .interest-insight { font-size: 0.8rem; opacity: 0.6; margin-top: 0.1rem; }
+        .interest-count {
+            font-size: 0.78rem; opacity: 0.5;
+            background: rgba(255,255,255,0.1); padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+        }
+
+        /* Bar chart */
+        .bar-row {
+            display: flex; align-items: center; gap: 0.6rem;
+            margin-bottom: 0.6rem;
+        }
+        .bar-row:last-child { margin-bottom: 0; }
+        .bar-label {
+            width: 36px; font-size: 0.82rem; font-weight: 600;
+            text-align: right; flex-shrink: 0;
+        }
+        .bar-track {
+            flex: 1; height: 26px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 13px; overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%; border-radius: 13px;
+            transition: width 0.8s ease-out;
+            min-width: 2px;
+        }
+        .bar-fill.learn { background: linear-gradient(90deg, #64c8ff, #4a9eff); }
+        .bar-fill.execute { background: linear-gradient(90deg, #ff9664, #ff6b4a); }
+        .bar-fill.inspire { background: linear-gradient(90deg, #c864ff, #9b4aff); }
+        .bar-value {
+            width: 40px; font-size: 0.82rem; opacity: 0.7;
+            text-align: right; flex-shrink: 0;
+        }
+
+        /* Recommended items */
+        .recommend-item {
+            display: flex; align-items: flex-start; gap: 0.7rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            cursor: pointer; transition: opacity 0.15s;
+        }
+        .recommend-item:hover { opacity: 0.8; }
+        .recommend-item:last-child { border-bottom: none; }
+        .recommend-num {
+            width: 22px; height: 22px;
+            background: rgba(255,150,100,0.2); color: #ff9664;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.72rem; font-weight: 700; flex-shrink: 0; margin-top: 0.1rem;
+        }
+        .recommend-info { flex: 1; }
+        .recommend-title { font-size: 0.88rem; font-weight: 600; line-height: 1.3; }
+        .recommend-reason { font-size: 0.78rem; opacity: 0.6; margin-top: 0.15rem; }
+
+        /* Loading */
+        .loading { text-align: center; padding: 3rem 1rem; }
         .spinner {
             width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2);
             border-top-color: #fff; border-radius: 50%;
@@ -111,13 +175,11 @@
 </head>
 <body>
     <div class="top-bar">
-        <div>
-            <h1>&#129302; AI 리포트</h1>
-            <div class="sub">저장한 콘텐츠를 AI가 분석합니다</div>
-        </div>
+        <h1>&#129302; 주간 리포트</h1>
+        <div class="sub">이번 주 저장한 콘텐츠를 AI가 분석합니다</div>
     </div>
 
-    <button class="gen-btn" id="genBtn">&#9889; 리포트 생성하기</button>
+    <button class="gen-btn" id="genBtn">&#9889; 주간 리포트 생성하기</button>
 
     <div id="reportArea"></div>
 
@@ -128,8 +190,10 @@
     </nav>
 
     <script type="module">
-        import { getItems } from '/js/storage.js';
-        import { generateReport } from '/js/report.js';
+        import { getItems, getWeeklyItems, getItemById, migrateItems, escapeHtml } from '/js/storage.js';
+        import { generateWeeklyReport } from '/js/report.js';
+
+        migrateItems();
 
         const btn = document.getElementById('genBtn');
         const area = document.getElementById('reportArea');
@@ -138,7 +202,7 @@
             area.innerHTML = `
                 <div class="empty-state">
                     <div class="icon">&#128451;</div>
-                    <p>보관함에 저장된 콘텐츠가 없습니다.<br>먼저 앱에서 콘텐츠를 공유해보세요!</p>
+                    <p>이번 주 저장한 콘텐츠가 없습니다.<br>먼저 앱에서 콘텐츠를 공유해보세요!</p>
                 </div>`;
         }
 
@@ -146,21 +210,95 @@
             area.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <div class="loading-text">AI가 콘텐츠를 분석 중입니다...</div>
+                    <div class="loading-text">AI가 이번 주 콘텐츠를 분석 중입니다...</div>
                 </div>`;
         }
 
         function showError(msg) {
-            area.innerHTML = `<div class="error-msg">${msg}</div>`;
+            area.innerHTML = `<div class="error-msg">${escapeHtml(msg)}</div>`;
         }
 
-        function showReport(markdown) {
-            area.innerHTML = `<div class="report-content">${marked.parse(markdown)}</div>`;
+        function showReport(data) {
+            let html = '';
+
+            // Weekly summary
+            if (data.weekly_summary) {
+                html += `
+                    <div class="report-section">
+                        <div class="section-title">&#128203; 이번 주 요약</div>
+                        <div class="weekly-summary">${escapeHtml(data.weekly_summary)}</div>
+                    </div>`;
+            }
+
+            // Top interests
+            if (data.top_interests && data.top_interests.length > 0) {
+                html += '<div class="report-section">';
+                html += '<div class="section-title">&#127775; 이번 주 관심사 Top 3</div>';
+                data.top_interests.forEach((item, idx) => {
+                    html += `
+                        <div class="interest-item">
+                            <div class="interest-rank">${idx + 1}</div>
+                            <div class="interest-info">
+                                <div class="interest-topic">${escapeHtml(item.topic || '')}</div>
+                                <div class="interest-insight">${escapeHtml(item.insight || '')}</div>
+                            </div>
+                            <span class="interest-count">${item.count || 0}개</span>
+                        </div>`;
+                });
+                html += '</div>';
+            }
+
+            // Intent ratio bar chart
+            if (data.intent_ratio) {
+                const ratio = data.intent_ratio;
+                html += '<div class="report-section">';
+                html += '<div class="section-title">&#127919; 저장 의도 분석</div>';
+
+                const entries = [
+                    { key: '배움', cls: 'learn', val: ratio['배움'] || 0 },
+                    { key: '실행', cls: 'execute', val: ratio['실행'] || 0 },
+                    { key: '영감', cls: 'inspire', val: ratio['영감'] || 0 }
+                ];
+                for (const e of entries) {
+                    const pct = Math.round(e.val * 100);
+                    html += `
+                        <div class="bar-row">
+                            <span class="bar-label">${e.key}</span>
+                            <div class="bar-track">
+                                <div class="bar-fill ${e.cls}" style="width: ${pct}%"></div>
+                            </div>
+                            <span class="bar-value">${pct}%</span>
+                        </div>`;
+                }
+                html += '</div>';
+            }
+
+            // Recommended items
+            if (data.recommended_items && data.recommended_items.length > 0) {
+                html += '<div class="report-section">';
+                html += '<div class="section-title">&#128161; 다시 볼 만한 콘텐츠</div>';
+
+                data.recommended_items.forEach((rec, idx) => {
+                    const item = getItemById(rec.id);
+                    const title = item ? (item.title || item.summary || '(제목 없음)') : '(삭제된 콘텐츠)';
+                    html += `
+                        <div class="recommend-item" ${item ? `onclick="location.href='/detail?id=${rec.id}'"` : ''}>
+                            <div class="recommend-num">${idx + 1}</div>
+                            <div class="recommend-info">
+                                <div class="recommend-title">${escapeHtml(title)}</div>
+                                <div class="recommend-reason">${escapeHtml(rec.reason || '')}</div>
+                            </div>
+                        </div>`;
+                });
+                html += '</div>';
+            }
+
+            area.innerHTML = html;
         }
 
         btn.addEventListener('click', async () => {
-            const items = getItems();
-            if (items.length === 0) {
+            const weeklyItems = getWeeklyItems();
+            if (weeklyItems.length === 0) {
                 showEmpty();
                 return;
             }
@@ -170,13 +308,9 @@
             showLoading();
 
             try {
-                const result = await generateReport();
-                if (result.markdown) {
-                    showReport(result.markdown);
-                    btn.textContent = '&#9889; 리포트 다시 생성하기';
-                } else {
-                    showError('리포트를 생성하지 못했습니다.');
-                }
+                const result = await generateWeeklyReport();
+                showReport(result);
+                btn.innerHTML = '&#9889; 리포트 다시 생성하기';
             } catch (err) {
                 showError(err.message || '오류가 발생했습니다.');
             } finally {

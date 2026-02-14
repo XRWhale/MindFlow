@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFlow - 상세</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 1rem 6rem;
+        }
+
+        /* Back button */
+        .back-bar {
+            width: 100%; max-width: 480px;
+            margin-bottom: 0.75rem;
+        }
+        .back-link {
+            color: #fff; text-decoration: none; font-size: 0.9rem;
+            opacity: 0.7; display: inline-flex; align-items: center; gap: 0.3rem;
+        }
+        .back-link:hover { opacity: 1; }
+
+        /* Thumbnail */
+        .detail-thumb {
+            width: 100%; max-width: 480px; max-height: 300px;
+            object-fit: cover; border-radius: 16px 16px 0 0;
+            display: block;
+        }
+
+        /* Main card */
+        .detail-card {
+            width: 100%; max-width: 480px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.15);
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+        .detail-card.has-thumb { border-radius: 0 0 16px 16px; }
+        .detail-body { padding: 1.2rem; }
+
+        /* Title */
+        .detail-title {
+            font-size: 1.2rem; font-weight: 700; line-height: 1.4;
+            margin-bottom: 0.3rem;
+        }
+        .detail-source {
+            font-size: 0.75rem; opacity: 0.5;
+            background: rgba(255,255,255,0.1); padding: 0.12rem 0.5rem;
+            border-radius: 20px; display: inline-block; margin-bottom: 0.8rem;
+        }
+
+        /* Sections */
+        .detail-section {
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .detail-section:last-child { border-bottom: none; margin-bottom: 0; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 600; opacity: 0.5;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 0.35rem;
+        }
+        .section-value {
+            font-size: 0.92rem; line-height: 1.6; opacity: 0.9;
+        }
+
+        /* Category badge */
+        .category-badge {
+            font-size: 0.8rem; font-weight: 600;
+            background: rgba(255,215,0,0.2); color: #ffd700;
+            padding: 0.2rem 0.7rem; border-radius: 20px;
+            display: inline-block;
+        }
+
+        /* Tags */
+        .tags-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .tag-chip {
+            font-size: 0.78rem;
+            background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8);
+            padding: 0.15rem 0.6rem; border-radius: 16px;
+        }
+
+        /* Intent */
+        .intent-msg {
+            font-size: 0.9rem; line-height: 1.5; opacity: 0.85;
+        }
+        .intent-highlight {
+            font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 6px;
+        }
+        .intent-highlight[data-intent="배움"] { background: rgba(100,200,255,0.2); color: #64c8ff; }
+        .intent-highlight[data-intent="실행"] { background: rgba(255,150,100,0.2); color: #ff9664; }
+        .intent-highlight[data-intent="영감"] { background: rgba(200,100,255,0.2); color: #c864ff; }
+
+        /* URL */
+        .detail-url a {
+            color: #ffd700; text-decoration: none; font-size: 0.82rem;
+            word-break: break-all;
+        }
+        .detail-url a:hover { text-decoration: underline; }
+        .detail-time { font-size: 0.78rem; opacity: 0.4; margin-top: 0.3rem; }
+
+        /* Placeholder card */
+        .placeholder-card {
+            width: 100%; max-width: 480px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px dashed rgba(255,255,255,0.15);
+            padding: 1.5rem;
+            text-align: center;
+            opacity: 0.6;
+        }
+        .placeholder-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .placeholder-card p { font-size: 0.85rem; }
+
+        /* Not found */
+        .not-found {
+            text-align: center; padding: 3rem 1rem; opacity: 0.7;
+        }
+
+        /* Bottom nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(30,20,60,0.85); backdrop-filter: blur(12px);
+            display: flex; justify-content: center; gap: 2rem;
+            padding: 0.75rem 1rem; padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .bottom-nav a {
+            color: #fff; text-decoration: none; font-size: 0.82rem;
+            opacity: 0.6; text-align: center; display: flex;
+            flex-direction: column; align-items: center; gap: 0.2rem;
+        }
+        .bottom-nav a .icon { font-size: 1.3rem; }
+    </style>
+</head>
+<body>
+    <div class="back-bar">
+        <a href="/home" class="back-link">&#8592; 보관함으로</a>
+    </div>
+
+    <div id="content"></div>
+
+    <nav class="bottom-nav">
+        <a href="/"><span class="icon">&#127968;</span>홈</a>
+        <a href="/home"><span class="icon">&#128451;</span>보관함</a>
+        <a href="/report"><span class="icon">&#129302;</span>리포트</a>
+    </nav>
+
+    <script type="module">
+        import { getItemById, incrementViewCount, escapeHtml, timeAgo, migrateItems } from '/js/storage.js';
+
+        migrateItems();
+
+        const container = document.getElementById('content');
+        const params = new URLSearchParams(location.search);
+        const id = params.get('id');
+
+        if (!id) {
+            location.replace('/home');
+        }
+
+        const item = getItemById(id);
+
+        if (!item) {
+            container.innerHTML = `
+                <div class="not-found">
+                    <p>콘텐츠를 찾을 수 없습니다.</p>
+                    <a href="/home" style="color:#ffd700; margin-top:1rem; display:inline-block;">보관함으로 돌아가기</a>
+                </div>`;
+        } else {
+            incrementViewCount(id);
+            renderDetail(item);
+        }
+
+        function renderDetail(item) {
+            let html = '';
+
+            // Thumbnail
+            if (item.thumbnail) {
+                html += `<img class="detail-thumb" src="${escapeHtml(item.thumbnail)}" alt="" onerror="this.style.display='none'">`;
+            }
+
+            // Main card
+            html += `<div class="detail-card ${item.thumbnail ? 'has-thumb' : ''}">`;
+            html += '<div class="detail-body">';
+
+            // Title + source
+            html += `<div class="detail-title">${escapeHtml(item.title) || '(제목 없음)'}</div>`;
+            if (item.source) {
+                const sourceLabels = {
+                    instagram: 'Instagram', youtube: 'YouTube',
+                    twitter: 'X (Twitter)', tiktok: 'TikTok', web: 'Web'
+                };
+                html += `<span class="detail-source">${sourceLabels[item.source] || item.source}</span>`;
+            }
+
+            // Summary
+            if (item.summary) {
+                html += '<div class="detail-section">';
+                html += '<div class="section-label">요약</div>';
+                html += `<div class="section-value">${escapeHtml(item.summary)}</div>`;
+                html += '</div>';
+            }
+
+            // Category
+            if (item.category) {
+                html += '<div class="detail-section">';
+                html += '<div class="section-label">카테고리</div>';
+                html += `<span class="category-badge">${escapeHtml(item.category)}</span>`;
+                html += '</div>';
+            }
+
+            // Tags
+            if (item.tags && item.tags.length > 0) {
+                html += '<div class="detail-section">';
+                html += '<div class="section-label">태그</div>';
+                html += '<div class="tags-row">';
+                for (const tag of item.tags) {
+                    html += `<span class="tag-chip">#${escapeHtml(tag)}</span>`;
+                }
+                html += '</div></div>';
+            }
+
+            // Intent
+            if (item.intent) {
+                html += '<div class="detail-section">';
+                html += '<div class="section-label">저장 의도</div>';
+                html += `<div class="intent-msg">이 콘텐츠는 <span class="intent-highlight" data-intent="${escapeHtml(item.intent)}">${escapeHtml(item.intent)}</span> 목적으로 저장한 것으로 보여요</div>`;
+                html += '</div>';
+            }
+
+            // URL
+            if (item.url) {
+                html += '<div class="detail-section">';
+                html += '<div class="section-label">원본 링크</div>';
+                html += `<div class="detail-url"><a href="${escapeHtml(item.url)}" target="_blank">${escapeHtml(item.url)}</a></div>`;
+                html += '</div>';
+            }
+
+            // Time
+            html += `<div class="detail-time">${timeAgo(item.createdAt)}</div>`;
+
+            html += '</div></div>'; // detail-body, detail-card
+
+            // Related content placeholder
+            html += `
+                <div class="placeholder-card">
+                    <div class="icon">&#128161;</div>
+                    <p>관련 콘텐츠 추천 기능이 곧 추가됩니다</p>
+                </div>`;
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-const CACHE_NAME = 'mindflow-v3';
-const ASSETS = ['/', '/index.html', '/home.html', '/report.html', '/manifest.json', '/js/storage.js', '/js/resolve.js', '/js/report.js'];
+const CACHE_NAME = 'mindflow-v4';
+const ASSETS = ['/', '/index.html', '/home.html', '/report.html', '/detail.html', '/manifest.json', '/js/storage.js', '/js/collect.js', '/js/report.js'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));

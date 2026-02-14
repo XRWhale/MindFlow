@@ -22,88 +22,15 @@
         /* Top bar */
         .top-bar {
             width: 100%; max-width: 480px;
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         .top-bar h1 { font-size: 1.5rem; font-weight: 700; }
-        .top-bar .count { font-size: 0.85rem; opacity: 0.6; }
-        .back-link {
-            color: #fff; text-decoration: none; font-size: 0.9rem; opacity: 0.7;
+        .top-bar .count {
+            font-size: 0.88rem; opacity: 0.7; margin-top: 0.3rem;
         }
-        .back-link:hover { opacity: 1; }
-
-        /* Card list */
-        #cardList { width: 100%; max-width: 480px; }
-
-        .card {
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 0;
-            overflow: hidden;
-            width: 100%;
-            margin-bottom: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.15);
-            animation: slideUp 0.3s ease-out;
+        .top-bar .ai-msg {
+            font-size: 0.8rem; opacity: 0.5; margin-top: 0.15rem;
         }
-        .card-hero-image {
-            width: 100%; max-height: 300px; object-fit: cover;
-            display: block; cursor: pointer;
-        }
-        .card-body {
-            padding: 1rem 1.1rem;
-        }
-        .card-header {
-            display: flex; justify-content: space-between; align-items: flex-start;
-        }
-        .card-title {
-            font-size: 1rem; font-weight: 600;
-            flex: 1; padding-right: 0.5rem;
-            line-height: 1.4;
-        }
-        .card-text {
-            word-break: break-word; line-height: 1.5; font-size: 0.88rem;
-            opacity: 0.85; margin-top: 0.4rem;
-            display: -webkit-box; -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical; overflow: hidden;
-        }
-        .card-url { margin-top: 0.4rem; }
-        .card-url a {
-            color: #ffd700; text-decoration: none; font-size: 0.82rem;
-            word-break: break-all;
-        }
-        .card-url a:hover { text-decoration: underline; }
-
-        /* Skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.08) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 0;
-        }
-        .skeleton-hero { width: 100%; height: 200px; }
-        .skeleton-text { height: 14px; width: 70%; margin-top: 0.5rem; border-radius: 8px; }
-        @keyframes shimmer { to { background-position: -200% 0; } }
-
-        /* Meta row */
-        .card-meta {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 0.6rem; padding-top: 0.5rem;
-            border-top: 1px solid rgba(255,255,255,0.08);
-        }
-        .card-time { font-size: 0.78rem; opacity: 0.45; }
-        .card-source {
-            font-size: 0.72rem; opacity: 0.5;
-            background: rgba(255,255,255,0.1); padding: 0.15rem 0.5rem;
-            border-radius: 20px;
-        }
-        .delete-btn {
-            background: none; border: none; color: rgba(255,255,255,0.4);
-            font-size: 1.1rem; cursor: pointer; padding: 0.2rem 0.4rem;
-            border-radius: 8px; transition: all 0.15s;
-        }
-        .delete-btn:hover { background: rgba(255,255,255,0.1); color: #ff6b6b; }
-        .delete-btn:active { transform: scale(0.9); }
 
         /* URL input */
         .add-bar {
@@ -128,6 +55,96 @@
         }
         .add-bar button:hover { background: rgba(255,255,255,0.3); }
         .add-bar button:active { transform: scale(0.97); }
+
+        /* Card list */
+        #cardList { width: 100%; max-width: 480px; }
+
+        .card {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            overflow: hidden;
+            width: 100%;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            animation: slideUp 0.3s ease-out;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .card:hover { background: rgba(255,255,255,0.18); }
+        .card-hero-image {
+            width: 100%; max-height: 200px; object-fit: cover;
+            display: block;
+        }
+        .card-body { padding: 0.9rem 1rem; }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        .card-title {
+            font-size: 0.95rem; font-weight: 600;
+            flex: 1; padding-right: 0.5rem;
+            line-height: 1.4;
+        }
+        .card-summary {
+            font-size: 0.84rem; opacity: 0.8; margin-top: 0.35rem;
+            line-height: 1.5;
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        /* Badges row */
+        .card-badges {
+            display: flex; flex-wrap: wrap; gap: 0.35rem;
+            margin-top: 0.5rem; align-items: center;
+        }
+        .category-badge {
+            font-size: 0.7rem; font-weight: 600;
+            background: rgba(255,215,0,0.2); color: #ffd700;
+            padding: 0.12rem 0.5rem; border-radius: 20px;
+        }
+        .tag-chip {
+            font-size: 0.68rem;
+            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+            padding: 0.1rem 0.4rem; border-radius: 12px;
+        }
+        .intent-badge {
+            font-size: 0.7rem; font-weight: 600;
+            padding: 0.12rem 0.5rem; border-radius: 20px;
+        }
+        .intent-badge[data-intent="배움"] { background: rgba(100,200,255,0.2); color: #64c8ff; }
+        .intent-badge[data-intent="실행"] { background: rgba(255,150,100,0.2); color: #ff9664; }
+        .intent-badge[data-intent="영감"] { background: rgba(200,100,255,0.2); color: #c864ff; }
+
+        /* Meta row */
+        .card-meta {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 0.5rem; padding-top: 0.4rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .card-time { font-size: 0.75rem; opacity: 0.4; }
+        .card-source {
+            font-size: 0.7rem; opacity: 0.5;
+            background: rgba(255,255,255,0.1); padding: 0.12rem 0.45rem;
+            border-radius: 20px;
+        }
+        .delete-btn {
+            background: none; border: none; color: rgba(255,255,255,0.4);
+            font-size: 1.1rem; cursor: pointer; padding: 0.2rem 0.4rem;
+            border-radius: 8px; transition: all 0.15s;
+        }
+        .delete-btn:hover { background: rgba(255,255,255,0.1); color: #ff6b6b; }
+        .delete-btn:active { transform: scale(0.9); }
+
+        /* Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.08) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        .skeleton-hero { width: 100%; height: 140px; }
+        .skeleton-text { height: 14px; width: 70%; margin-top: 0.4rem; border-radius: 8px; }
+        .skeleton-badge { height: 20px; width: 50px; border-radius: 20px; display: inline-block; }
+        @keyframes shimmer { to { background-position: -200% 0; } }
 
         .empty-state { text-align: center; padding: 3rem 1rem; opacity: 0.7; }
         .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
@@ -157,14 +174,13 @@
 </head>
 <body>
     <div class="top-bar">
-        <div>
-            <h1>&#128451; 보관함</h1>
-            <div class="count" id="itemCount"></div>
-        </div>
+        <h1>&#128451; 보관함</h1>
+        <div class="count" id="itemCount"></div>
+        <div class="ai-msg" id="aiMsg"></div>
     </div>
 
     <div class="add-bar">
-        <input type="url" id="urlInput" placeholder="URL을 붙여넣기..." autocomplete="off">
+        <input type="url" id="urlInput" placeholder="URL 직접 추가..." autocomplete="off">
         <button id="addBtn">추가</button>
     </div>
 
@@ -182,21 +198,27 @@
     </nav>
 
     <script type="module">
-        import { getItems, addItem, deleteItem, updateItem, timeAgo, escapeHtml } from '/js/storage.js';
-        import { resolveAndUpdate } from '/js/resolve.js';
+        import { getItems, getWeeklyItems, addItem, deleteItem, updateItem, timeAgo, escapeHtml, migrateItems } from '/js/storage.js';
+        import { collectAndUpdate } from '/js/collect.js';
+
+        migrateItems();
 
         const list = document.getElementById('cardList');
         const empty = document.getElementById('emptyState');
         const countEl = document.getElementById('itemCount');
+        const aiMsg = document.getElementById('aiMsg');
         const urlInput = document.getElementById('urlInput');
         const addBtn = document.getElementById('addBtn');
 
-        // Manual URL add
+        const SOURCE_ICONS = {
+            instagram: 'IG', youtube: 'YT', twitter: 'X', tiktok: 'TT', web: 'Web'
+        };
+
         function handleAdd() {
             const raw = urlInput.value.trim();
             if (!raw) return;
             try { new URL(raw); } catch { urlInput.value = ''; return; }
-            addItem('', '', raw);
+            addItem({ url: raw });
             urlInput.value = '';
             render();
         }
@@ -206,14 +228,21 @@
         function render() {
             list.querySelectorAll('.card').forEach((c) => c.remove());
             const items = getItems();
+            const weeklyCount = getWeeklyItems().length;
 
             if (items.length === 0) {
                 empty.classList.remove('hidden');
                 countEl.textContent = '';
+                aiMsg.textContent = '';
                 return;
             }
             empty.classList.add('hidden');
-            countEl.textContent = `총 ${items.length}개`;
+            countEl.textContent = `이번 주 저장한 콘텐츠: ${weeklyCount}개`;
+
+            const resolvedCount = items.filter(i => i.resolved).length;
+            if (resolvedCount > 0) {
+                aiMsg.textContent = `AI가 자동으로 정리했어요 (${resolvedCount}개 분석 완료)`;
+            }
 
             for (const item of items) {
                 list.appendChild(buildCard(item));
@@ -225,107 +254,147 @@
             card.className = 'card';
             card.dataset.id = item.id;
 
-            const displayTitle = item.ogTitle || item.title || '';
-            const displayText = item.ogDescription || item.text || '';
             const needsResolve = item.url && !item.resolved;
-            // Re-resolve Instagram items that were resolved before oEmbed was added
-            const needsReResolve = item.resolved && item.resolveV !== 5
-                && item.url && item.url.includes('instagram.com') && !item.ogImage;
-
             let html = '';
 
-            // Hero image at top of card
-            if (item.ogImage) {
-                html += `<a href="${escapeHtml(item.url)}" target="_blank"><img class="card-hero-image" src="${escapeHtml(item.ogImage)}" alt="" loading="lazy" onerror="this.style.display='none'"></a>`;
-            } else if (needsResolve || needsReResolve) {
+            // Thumbnail
+            if (item.thumbnail) {
+                html += `<img class="card-hero-image" src="${escapeHtml(item.thumbnail)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
+            } else if (needsResolve) {
                 html += `<div class="skeleton skeleton-hero" data-slot="image"></div>`;
             }
 
-            // Card body with text content
             html += '<div class="card-body">';
+
+            // Header: title + delete
             html += '<div class="card-header">';
-            html += `<div class="card-title">${escapeHtml(displayTitle) || '<span style="opacity:0.5">(제목 없음)</span>'}</div>`;
+            html += `<div class="card-title">${escapeHtml(item.title) || '<span style="opacity:0.5">(제목 없음)</span>'}</div>`;
             html += `<button class="delete-btn" data-id="${item.id}" title="삭제">&#128465;</button>`;
             html += '</div>';
 
-            if (displayText) {
-                html += `<div class="card-text">${escapeHtml(displayText)}</div>`;
-            } else if (needsResolve || needsReResolve) {
-                html += `<div class="skeleton skeleton-text" data-slot="text"></div>`;
+            // Summary
+            if (item.summary) {
+                html += `<div class="card-summary">${escapeHtml(item.summary)}</div>`;
+            } else if (needsResolve) {
+                html += `<div class="skeleton skeleton-text" data-slot="summary"></div>`;
             }
 
-            if (item.url) {
-                html += `<div class="card-url"><a href="${escapeHtml(item.url)}" target="_blank">${escapeHtml(item.url)}</a></div>`;
+            // Badges: category + tags + intent
+            if (item.resolved && (item.category || item.tags?.length || item.intent)) {
+                html += '<div class="card-badges">';
+                if (item.category) {
+                    html += `<span class="category-badge">${escapeHtml(item.category)}</span>`;
+                }
+                if (item.tags && item.tags.length > 0) {
+                    for (const tag of item.tags) {
+                        html += `<span class="tag-chip">#${escapeHtml(tag)}</span>`;
+                    }
+                }
+                if (item.intent) {
+                    html += `<span class="intent-badge" data-intent="${escapeHtml(item.intent)}">${escapeHtml(item.intent)}</span>`;
+                }
+                html += '</div>';
+            } else if (needsResolve) {
+                html += '<div class="card-badges"><span class="skeleton skeleton-badge" data-slot="badges"></span></div>';
             }
 
+            // Meta: time + source
             html += '<div class="card-meta">';
             html += `<span class="card-time">${timeAgo(item.createdAt)}</span>`;
-            if (item.ogSource) {
-                html += `<span class="card-source">${escapeHtml(item.ogSource)}</span>`;
+            if (item.source) {
+                html += `<span class="card-source">${SOURCE_ICONS[item.source] || item.source}</span>`;
             }
             html += '</div>';
-            html += '</div>'; // card-body
 
+            html += '</div>'; // card-body
             card.innerHTML = html;
 
-            // Resolve metadata if needed (new or re-resolve for Instagram)
-            if (needsResolve || needsReResolve) {
-                resolveAndUpdate(item.id, item.url).then((meta) => {
-                    if (!meta) {
+            // Navigate to detail on card click (not delete button)
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.delete-btn')) return;
+                location.href = `/detail?id=${item.id}`;
+            });
+
+            // Resolve if needed
+            if (needsResolve) {
+                collectAndUpdate(item.id, item.url).then((result) => {
+                    if (!result) {
                         card.querySelectorAll('.skeleton').forEach((s) => s.remove());
                         return;
                     }
+
                     // Update title
                     const titleEl = card.querySelector('.card-title');
-                    if (meta.title && titleEl) titleEl.textContent = meta.title;
+                    if (result.title && titleEl) titleEl.textContent = result.title;
 
-                    // Update description
-                    const textSlot = card.querySelector('[data-slot="text"]');
-                    const textEl = card.querySelector('.card-text');
-                    if (meta.description) {
-                        if (textSlot) {
-                            textSlot.classList.remove('skeleton', 'skeleton-text');
-                            textSlot.className = 'card-text';
-                            textSlot.textContent = meta.description;
-                        } else if (textEl) {
-                            textEl.textContent = meta.description;
-                        } else {
-                            const div = document.createElement('div');
-                            div.className = 'card-text';
-                            div.textContent = meta.description;
-                            card.querySelector('.card-url')?.before(div);
+                    // Update summary
+                    const summarySlot = card.querySelector('[data-slot="summary"]');
+                    if (result.summary) {
+                        if (summarySlot) {
+                            summarySlot.className = 'card-summary';
+                            summarySlot.textContent = result.summary;
                         }
-                    } else if (textSlot) {
-                        textSlot.remove();
+                    } else if (summarySlot) {
+                        summarySlot.remove();
                     }
 
-                    // Replace hero skeleton with image
-                    const heroSlot = card.querySelector('[data-slot="image"]');
-                    if (heroSlot) heroSlot.remove();
-                    if (meta.image) {
-                        const link = document.createElement('a');
-                        link.href = item.url;
-                        link.target = '_blank';
+                    // Update image
+                    const imageSlot = card.querySelector('[data-slot="image"]');
+                    if (imageSlot) imageSlot.remove();
+                    if (result.thumbnail) {
                         const img = document.createElement('img');
                         img.className = 'card-hero-image';
-                        img.src = meta.image;
+                        img.src = result.thumbnail;
                         img.loading = 'lazy';
-                        img.onerror = () => link.style.display = 'none';
-                        link.appendChild(img);
-                        card.insertBefore(link, card.firstChild);
+                        img.onerror = () => img.style.display = 'none';
+                        card.insertBefore(img, card.firstChild);
                     }
 
-                    // Source badge
-                    if (meta.source) {
-                        const existing = card.querySelector('.card-source');
-                        if (existing) { existing.textContent = meta.source; }
-                        else {
+                    // Update badges
+                    const badgesSlot = card.querySelector('[data-slot="badges"]');
+                    if (badgesSlot) {
+                        const badgesContainer = badgesSlot.parentElement;
+                        badgesSlot.remove();
+                        if (result.category) {
+                            const cat = document.createElement('span');
+                            cat.className = 'category-badge';
+                            cat.textContent = result.category;
+                            badgesContainer.appendChild(cat);
+                        }
+                        if (result.tags) {
+                            for (const tag of result.tags) {
+                                const t = document.createElement('span');
+                                t.className = 'tag-chip';
+                                t.textContent = '#' + tag;
+                                badgesContainer.appendChild(t);
+                            }
+                        }
+                        if (result.intent) {
+                            const i = document.createElement('span');
+                            i.className = 'intent-badge';
+                            i.dataset.intent = result.intent;
+                            i.textContent = result.intent;
+                            badgesContainer.appendChild(i);
+                        }
+                    }
+
+                    // Update source
+                    const sourceEl = card.querySelector('.card-source');
+                    if (result.source) {
+                        if (sourceEl) {
+                            sourceEl.textContent = SOURCE_ICONS[result.source] || result.source;
+                        } else {
                             const badge = document.createElement('span');
                             badge.className = 'card-source';
-                            badge.textContent = meta.source;
+                            badge.textContent = SOURCE_ICONS[result.source] || result.source;
                             card.querySelector('.card-meta')?.appendChild(badge);
                         }
                     }
+
+                    // Update AI message count
+                    const items = getItems();
+                    const rc = items.filter(i => i.resolved).length;
+                    aiMsg.textContent = `AI가 자동으로 정리했어요 (${rc}개 분석 완료)`;
                 });
             }
 
@@ -336,6 +405,7 @@
         list.addEventListener('click', (e) => {
             const btn = e.target.closest('.delete-btn');
             if (!btn) return;
+            e.stopPropagation();
             const id = btn.dataset.id;
             if (id) { deleteItem(id); render(); }
         });

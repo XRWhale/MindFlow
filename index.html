@@ -75,12 +75,15 @@
 
     <div class="nav-buttons">
         <a href="/home" class="nav-btn"><span class="icon">&#128451;</span> 보관함 보기</a>
-        <a href="/report" class="nav-btn"><span class="icon">&#129302;</span> AI 리포트 보기</a>
+        <a href="/report" class="nav-btn"><span class="icon">&#129302;</span> 주간 리포트 보기</a>
         <div class="install-btn hidden" id="installBtn">&#8987; 앱 설치하기</div>
     </div>
 
     <script type="module">
-        import { addItem } from '/js/storage.js';
+        import { addItem, migrateItems } from '/js/storage.js';
+
+        // Run data migration on first load
+        migrateItems();
 
         // Register Service Worker
         if ('serviceWorker' in navigator) {
@@ -94,7 +97,7 @@
         const url = params.get('url') || '';
 
         if (title || text || url) {
-            addItem(title, text, url);
+            addItem({ title, url });
             location.replace('/home');
         }
 

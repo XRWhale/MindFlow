@@ -1,22 +1,25 @@
-import { getItems } from './storage.js';
+import { getWeeklyItems } from './storage.js';
 
-export function buildReportPayload() {
-    const items = getItems();
+export function buildWeeklyPayload() {
+    const items = getWeeklyItems();
     return {
-        posts: items.map((item) => ({
-            url: item.url || '',
-            title: item.ogTitle || item.title || '',
-            text: item.text || '',
-            image: item.ogImage || '',
-            caption: item.ogDescription || ''
+        items: items.map((item) => ({
+            id: item.id,
+            title: item.title || '',
+            summary: item.summary || '',
+            category: item.category || '',
+            tags: item.tags || [],
+            intent: item.intent || '',
+            viewCount: item.viewCount || 0,
+            createdAt: item.createdAt
         })),
         total: items.length,
         date: Date.now()
     };
 }
 
-export async function generateReport() {
-    const payload = buildReportPayload();
+export async function generateWeeklyReport() {
+    const payload = buildWeeklyPayload();
     if (payload.total === 0) throw new Error('No items to analyze');
 
     const res = await fetch('/api/report', {
