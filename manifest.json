@@ -6,8 +6,8 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#667eea",
-  "theme_color": "#667eea",
+  "background_color": "#f7f7f8",
+  "theme_color": "#f7f7f8",
   "orientation": "portrait",
   "icons": [
     {
@@ -24,8 +24,9 @@
     }
   ],
   "share_target": {
-    "action": "/",
-    "method": "GET",
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
     "params": {
       "title": "title",
       "text": "text",
