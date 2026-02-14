@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mindflow-v11';
+const CACHE_NAME = 'mindflow-v12';
 const ASSETS = ['/', '/index.html', '/home.html', '/report.html', '/detail.html', '/manifest.json', '/js/storage.js', '/js/collect.js', '/js/report.js'];
 
 self.addEventListener('install', (e) => {
