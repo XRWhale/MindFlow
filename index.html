@@ -122,9 +122,16 @@
             for (const item of picks) {
                 const style = INTENT_STYLES[item.intent] || DEFAULT_STYLE;
                 const card = document.createElement('div');
-                card.className = 'bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-black/5 flex flex-col gap-4 relative overflow-hidden group cursor-pointer hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow';
+                card.className = 'bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-black/5 relative overflow-hidden group cursor-pointer hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow';
 
                 let html = '';
+
+                // Thumbnail
+                if (item.thumbnail) {
+                    html += `<img class="w-full h-44 object-cover" src="${escapeHtml(item.thumbnail)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
+                }
+
+                html += '<div class="p-6 flex flex-col gap-4">';
                 html += '<div class="flex justify-between items-start">';
                 html += `<span class="px-3 py-1 rounded-full text-xs font-semibold tracking-wide" style="${style.bg};${style.color}">${escapeHtml(item.intent || '기타')}</span>`;
                 html += `<span class="material-symbols-outlined text-[#121a31]/20 group-hover:text-[#121a31]/40 transition-colors">${style.icon}</span>`;
@@ -137,6 +144,7 @@
 
                 html += `<div class="absolute -right-4 -bottom-4 opacity-[0.04] scale-150 pointer-events-none">`;
                 html += `<span class="material-symbols-outlined text-[120px]">${style.deco}</span>`;
+                html += '</div>';
                 html += '</div>';
 
                 card.innerHTML = html;
